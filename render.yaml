@@ -2,6 +2,7 @@ databases:
   - name: wger-db
     databaseName: wger
     user: wger
+    plan: free
 
 services:
   - type: redis
@@ -12,6 +13,7 @@ services:
   - type: web
     name: wger-web
     env: docker
+    plan: free
     dockerfilePath: extras/docker/production/Dockerfile
     envVars:
       - key: WGER_USE_GUNICORN
@@ -66,56 +68,56 @@ services:
           name: wger-redis
           property: connectionString
       - key: USE_CELERY
-        value: "True"
+        value: "False" # Disabled since we are removing the worker to stay free
 
-  - type: worker
-    name: wger-worker
-    env: docker
-    dockerfilePath: extras/docker/production/Dockerfile
-    dockerCommand: /start-worker
-    envVars:
-      - key: DJANGO_DEBUG
-        value: "False"
-      - key: DJANGO_PERFORM_MIGRATIONS
-        value: "False"
-      - key: DJANGO_DB_ENGINE
-        value: django.db.backends.postgresql
-      - key: DJANGO_DB_DATABASE
-        fromDatabase:
-          name: wger-db
-          property: database
-      - key: DJANGO_DB_USER
-        fromDatabase:
-          name: wger-db
-          property: user
-      - key: DJANGO_DB_PASSWORD
-        fromDatabase:
-          name: wger-db
-          property: password
-      - key: DJANGO_DB_HOST
-        fromDatabase:
-          name: wger-db
-          property: host
-      - key: DJANGO_DB_PORT
-        fromDatabase:
-          name: wger-db
-          property: port
-      - key: CELERY_BROKER
-        fromService:
-          type: redis
-          name: wger-redis
-          property: connectionString
-      - key: CELERY_BACKEND
-        fromService:
-          type: redis
-          name: wger-redis
-          property: connectionString
-      - key: DJANGO_CACHE_BACKEND
-        value: "django.core.cache.backends.redis.RedisCache"
-      - key: DJANGO_CACHE_LOCATION
-        fromService:
-          type: redis
-          name: wger-redis
-          property: connectionString
-      - key: USE_CELERY
-        value: "True"
+#  - type: worker
+#    name: wger-worker
+#    env: docker
+#    dockerfilePath: extras/docker/production/Dockerfile
+#    dockerCommand: /start-worker
+#    envVars:
+#      - key: DJANGO_DEBUG
+#        value: "False"
+#      - key: DJANGO_PERFORM_MIGRATIONS
+#        value: "False"
+#      - key: DJANGO_DB_ENGINE
+#        value: django.db.backends.postgresql
+#      - key: DJANGO_DB_DATABASE
+#        fromDatabase:
+#          name: wger-db
+#          property: database
+#      - key: DJANGO_DB_USER
+#        fromDatabase:
+#          name: wger-db
+#          property: user
+#      - key: DJANGO_DB_PASSWORD
+#        fromDatabase:
+#          name: wger-db
+#          property: password
+#      - key: DJANGO_DB_HOST
+#        fromDatabase:
+#          name: wger-db
+#          property: host
+#      - key: DJANGO_DB_PORT
+#        fromDatabase:
+#          name: wger-db
+#          property: port
+#      - key: CELERY_BROKER
+#        fromService:
+#          type: redis
+#          name: wger-redis
+#          property: connectionString
+#      - key: CELERY_BACKEND
+#        fromService:
+#          type: redis
+#          name: wger-redis
+#          property: connectionString
+#      - key: DJANGO_CACHE_BACKEND
+#        value: "django.core.cache.backends.redis.RedisCache"
+#      - key: DJANGO_CACHE_LOCATION
+#        fromService:
+#          type: redis
+#          name: wger-redis
+#          property: connectionString
+#      - key: USE_CELERY
+#        value: "True"
